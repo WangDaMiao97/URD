@@ -252,7 +252,8 @@ divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.
     cells.seg1.pt.group <- length(intersect(cells.segment.1, cells.in.pt.group))
     cells.seg2.pt.group <- length(intersect(cells.segment.2, cells.in.pt.group))
     # Test for unimodality with Hartigan's diptest
-    dip <- diptest::dip.test(visit.data[cells.in.pt.group,"preference"])
+    dip <- diptest::dip.test(visit.data)
+    print(visit.data[1:10,])
     p <- dip$p.value
     # Determine mean of preference
     mean.pref <- mean(abs(visit.data[cells.in.pt.group,"preference"]), na.rm=T)
