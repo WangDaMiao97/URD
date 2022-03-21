@@ -170,7 +170,7 @@ visitDivergenceByPseudotime <- function(object, pseudotime, segment.1, segment.2
     div.pseudotime$different <- div.pseudotime$p <= p.thresh
   } else if (divergence.method=="preference") {
     # Calculate divergence by dip test on preference in each window
-    div.pseudotime <- divergencePreferenceDip(visit.data=visit.data, cells.in.windows=cells.in.windows, cells.segment.1=cells.segment.1, cells.segment.2=cells.segment.2, diff_genes = diff_genes)
+    div.pseudotime <- divergencePreferenceDip(object, visit.data=visit.data, cells.in.windows=cells.in.windows, cells.segment.1=cells.segment.1, cells.segment.2=cells.segment.2, diff_genes = diff_genes)
     # Multiple hypothesis correction because ran several tests
     div.pseudotime$p <- p.adjust(div.pseudotime$p, method="holm")
     # Determine whether the the visit distributions are 'different': must have significant p-value for bimodality OR be unimodal, but with mean preference far from 0. (Sometimes can get a unimodal distribution, but it's not near 0, so should not fuse there)
@@ -242,7 +242,7 @@ divergenceKSVisitation <- function(visit.data, pseudotime.windows, cells.segment
 #' 
 #' @return (data.frame) Rows are pseudotime windows, columns are a numeric representation of whether (0 or 1) ("p"), pseudotime of cells in the window ("mean.pseudotime", "min.pseudotime", "max.pseudotime"), and number of cells considered from each segment ("cells.visited.seg1", "cells.visited.seg2")
 #' @keywords internal
-divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.1, cells.segment.2, diff_genes = NULL) {
+divergencePreferenceDip <- function(object, visit.data, cells.in.windows, cells.segment.1, cells.segment.2, diff_genes = NULL) {
   
   # Calculate visitation preference for each cell in visit.data
   visit.data$preference <- apply(visit.data, 1, function(x) preference(x[1], x[2], signed=T))
@@ -263,8 +263,8 @@ divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.
     # Determine mean of preference
     mean.pref <- mean(abs(visit.data[cells.in.pt.group,"preference"]), na.rm=T)
     if (length(diff_genes)>0) {
-      seg1.genes <- axial@logupx.data[diff_genes ,intersect(cells.segment.1, cells.in.pt.group)]
-      seg2.genes <- axial@logupx.data[diff_genes ,intersect(cells.segment.2, cells.in.pt.group)]
+      seg1.genes <- object@logupx.data[diff_genes ,intersect(cells.segment.1, cells.in.pt.group)]
+      seg2.genes <- object@logupx.data[diff_genes ,intersect(cells.segment.2, cells.in.pt.group)]
       seg1.genes.mean = rowMeans(seg1.genes)
       seg2.genes.mean = rowMeans(seg2.genes)
       if (cells.seg1.pt.group==0){seg1.genes.mean = rep(0, times=length(diff_genes))}
