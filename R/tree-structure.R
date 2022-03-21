@@ -251,16 +251,25 @@ divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.
     # Cells in each segment
     cells.seg1.pt.group <- length(intersect(cells.segment.1, cells.in.pt.group))
     cells.seg2.pt.group <- length(intersect(cells.segment.2, cells.in.pt.group))
-    if (length(diff_genes)>0) {
-      seg1.genes <- axial@logupx.data[diff_genes ,cells.seg1.pt.group]
-      seg2.genes <- axial@logupx.data[diff_genes ,cells.seg2.pt.group]
-    }
     # Test for unimodality with Hartigan's diptest
     dip <- diptest::dip.test(visit.data[cells.in.pt.group,"preference"])
     print(visit.data)
     p <- dip$p.value
     # Determine mean of preference
     mean.pref <- mean(abs(visit.data[cells.in.pt.group,"preference"]), na.rm=T)
+    if (length(diff_genes)>0) {
+      seg1.genes <- axial@logupx.data[diff_genes ,intersect(cells.segment.1, cells.in.pt.group)]
+      seg2.genes <- axial@logupx.data[diff_genes ,intersect(cells.segment.2, cells.in.pt.group)]
+      seg1.genes.mean = rowMeans(seg1.genes)
+      seg2.genes.mean = rowMeans(seg2.genes)
+      diff_sum = 0
+      for(i in range(1:length(diff_genes))){
+        print(i)
+        diff_sum = diff_sum + max(seg1.genes.mean[i], seg2.genes.mean[i]) - min(seg1.genes.mean[i], seg2.genes.mean[i])
+      }
+      diff_mean = diff_sum/length(diff_genes)
+      return(c(mean.pt, min.pt, max.pt, cells.seg1.pt.group, cells.seg2.pt.group, p, mean.pref, diff_mean))
+    }
     return(c(mean.pt, min.pt, max.pt, cells.seg1.pt.group, cells.seg2.pt.group, p, mean.pref))
   }))))
   colnames(div.pseudotime) <- c("mean.pseudotime", "min.pseudotime", "max.pseudotime", "cells.visited.seg1", "cells.visited.seg2", "p.value", "mean.preference")
