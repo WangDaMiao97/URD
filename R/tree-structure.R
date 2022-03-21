@@ -251,7 +251,7 @@ divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.
     # Cells in each segment
     cells.seg1.pt.group <- length(intersect(cells.segment.1, cells.in.pt.group))
     cells.seg2.pt.group <- length(intersect(cells.segment.2, cells.in.pt.group))
-    if (diff_genes) {
+    if (length(diff_genes)>0) {
       seg1.genes <- axial@logupx.data[diff_genes ,cells.seg1.pt.group]
       seg2.genes <- axial@logupx.data[diff_genes ,cells.seg2.pt.group]
     }
