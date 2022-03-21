@@ -267,6 +267,8 @@ divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.
       seg2.genes <- axial@logupx.data[diff_genes ,intersect(cells.segment.2, cells.in.pt.group)]
       seg1.genes.mean = rowMeans(seg1.genes)
       seg2.genes.mean = rowMeans(seg2.genes)
+      if (cells.seg1.pt.group==0){seg1.genes.mean = rep(0, times=length(diff_genes))}
+      if (cells.seg2.pt.group==0){seg2.genes.mean = rep(0, times=length(diff_genes))}
       diff_sum = 0
       for(i in c(1:length(diff_genes))){
         print(i)
