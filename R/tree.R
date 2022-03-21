@@ -114,12 +114,7 @@ buildTree <- function(object, pseudotime, tips.use=NULL, divergence.method=c("ks
     stringsAsFactors = F, row.names = tips
   )
   # Calculate segment pseudotime divergence, WITHOUT cache in case this function is being re-run
-  if (diff_genes){
-    object <- allSegmentDivergenceByPseudotime(object, pseudotime=pseudotime, divergence.method=divergence.method, segments=tips, pseudotime.cuts=cells.per.pseudotime.bin, window.size=bins.per.pseudotime.window, minimum.visits=minimum.visits, visit.threshold=visit.threshold, p.thresh=p.thresh, breakpoint.decision.plots=save.breakpoint.plots, cache=F, verbose=verbose, diff_genes = diff_genes)
-  }
-  else{
-    object <- allSegmentDivergenceByPseudotime(object, pseudotime=pseudotime, divergence.method=divergence.method, segments=tips, pseudotime.cuts=cells.per.pseudotime.bin, window.size=bins.per.pseudotime.window, minimum.visits=minimum.visits, visit.threshold=visit.threshold, p.thresh=p.thresh, breakpoint.decision.plots=save.breakpoint.plots, cache=F, verbose=verbose)
-  }
+  object <- allSegmentDivergenceByPseudotime(object, pseudotime=pseudotime, divergence.method=divergence.method, segments=tips, pseudotime.cuts=cells.per.pseudotime.bin, window.size=bins.per.pseudotime.window, minimum.visits=minimum.visits, visit.threshold=visit.threshold, p.thresh=p.thresh, breakpoint.decision.plots=save.breakpoint.plots, cache=F, verbose=verbose, diff_genes = diff_genes)
   # If storing all pseudotime breakpoint info, keep track of it.
   if (save.all.breakpoint.info) {
     all.pseudotime.breakpoint.details <- object@tree$pseudotime.breakpoint.details
