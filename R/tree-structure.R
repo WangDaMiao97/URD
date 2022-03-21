@@ -279,7 +279,7 @@ divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.
     }
     return(c(mean.pt, min.pt, max.pt, cells.seg1.pt.group, cells.seg2.pt.group, p, mean.pref))
   }))))
-  if (length(diff_genes)>0) {  
+  if (length(diff_genes)=0) {  
     colnames(div.pseudotime) <- c("mean.pseudotime", "min.pseudotime", "max.pseudotime", "cells.visited.seg1", "cells.visited.seg2", "p.value", "mean.preference")
   }
   else{
