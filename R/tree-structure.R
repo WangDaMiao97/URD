@@ -237,7 +237,7 @@ divergenceKSVisitation <- function(visit.data, pseudotime.windows, cells.segment
 #' 
 #' @return (data.frame) Rows are pseudotime windows, columns are a numeric representation of whether (0 or 1) ("p"), pseudotime of cells in the window ("mean.pseudotime", "min.pseudotime", "max.pseudotime"), and number of cells considered from each segment ("cells.visited.seg1", "cells.visited.seg2")
 #' @keywords internal
-divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.1, cells.segment.2) {
+divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.1, cells.segment.2, diff_genes) {
   
   # Calculate visitation preference for each cell in visit.data
   visit.data$preference <- apply(visit.data, 1, function(x) preference(x[1], x[2], signed=T))
@@ -251,6 +251,8 @@ divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.
     # Cells in each segment
     cells.seg1.pt.group <- length(intersect(cells.segment.1, cells.in.pt.group))
     cells.seg2.pt.group <- length(intersect(cells.segment.2, cells.in.pt.group))
+    seg1.genes <- axial@logupx.data[diff_genes ,cells.seg1.pt.group]
+    seg2.genes <- axial@logupx.data[diff_genes ,cells.seg2.pt.group]
     # Test for unimodality with Hartigan's diptest
     dip <- diptest::dip.test(visit.data[cells.in.pt.group,"preference"])
     print(visit.data)
