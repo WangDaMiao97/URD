@@ -263,7 +263,7 @@ divergencePreferenceDip <- function(visit.data, cells.in.windows, cells.segment.
       seg1.genes.mean = rowMeans(seg1.genes)
       seg2.genes.mean = rowMeans(seg2.genes)
       diff_sum = 0
-      for(i in range(1:length(diff_genes))){
+      for(i in c(1:length(diff_genes))){
         print(i)
         diff_sum = diff_sum + max(seg1.genes.mean[i], seg2.genes.mean[i]) - min(seg1.genes.mean[i], seg2.genes.mean[i])
       }
