@@ -266,13 +266,15 @@ divergencePreferenceDip <- function(object, visit.data, cells.in.windows, cells.
       if (cells.seg1.pt.group>0){
         seg1.genes <- object@logupx.data[diff_genes ,intersect(cells.segment.1, cells.in.pt.group)]
         print(c(cells.seg1.pt.group, dim(seg1.genes)))
-        seg1.genes.mean = rowMeans(seg1.genes)
+        if (cells.seg1.pt.group>1){seg1.genes.mean = rowMeans(seg1.genes)}
+        else{seg1.genes.mean=seg1.genes}
       }
       else{seg1.genes.mean = rep(0, times=length(diff_genes))}
       if (cells.seg2.pt.group>0){
         seg2.genes <- object@logupx.data[diff_genes ,intersect(cells.segment.2, cells.in.pt.group)]
         print(c(cells.seg2.pt.group, dim(seg2.genes)))
-        seg2.genes.mean = rowMeans(seg2.genes)
+        if (cells.seg2.pt.group>1){seg2.genes.mean = rowMeans(seg2.genes)}
+        else{seg2.genes.mean=seg2.genes}
       }
       else{seg2.genes.mean = rep(0, times=length(diff_genes))}
       diff_sum = 0
