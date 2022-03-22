@@ -263,14 +263,16 @@ divergencePreferenceDip <- function(object, visit.data, cells.in.windows, cells.
     # Determine mean of preference
     mean.pref <- mean(abs(visit.data[cells.in.pt.group,"preference"]), na.rm=T)
     if (length(diff_genes)>0) {
-      seg1.genes <- object@logupx.data[diff_genes ,intersect(cells.segment.1, cells.in.pt.group)]
-      seg2.genes <- object@logupx.data[diff_genes ,intersect(cells.segment.2, cells.in.pt.group)]
-      print(c(cells.seg1.pt.group, cells.seg2.pt.group))
-      print(c(dim(seg1.genes),dim(seg2.genes)))
-      seg1.genes.mean = rowMeans(seg1.genes)
-      seg2.genes.mean = rowMeans(seg2.genes)
-      if (cells.seg1.pt.group==0){seg1.genes.mean = rep(0, times=length(diff_genes))}
-      if (cells.seg2.pt.group==0){seg2.genes.mean = rep(0, times=length(diff_genes))}
+      if (cells.seg1.pt.group>0){
+        seg1.genes <- object@logupx.data[diff_genes ,intersect(cells.segment.1, cells.in.pt.group)]
+        seg1.genes.mean = rowMeans(seg1.genes)
+      }
+      else{seg1.genes.mean = rep(0, times=length(diff_genes))}
+      if (cells.seg2.pt.group>0){
+        seg2.genes <- object@logupx.data[diff_genes ,intersect(cells.segment.2, cells.in.pt.group)]
+        seg2.genes.mean = rowMeans(seg2.genes)
+      }
+      else{seg2.genes.mean = rep(0, times=length(diff_genes))}
       diff_sum = 0
       for(i in c(1:length(diff_genes))){
         # print(i)
