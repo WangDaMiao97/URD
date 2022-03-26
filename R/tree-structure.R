@@ -75,7 +75,7 @@ allSegmentDivergenceByPseudotime <- function(object, pseudotime, segments, diver
     trim.before <- max(object@tree$segment.pseudotime.limits[unlist(segment.overlaps[overlap,c("seg.1","seg.2")]), "start"])
     trim.after <- min(object@tree$segment.pseudotime.limits[unlist(segment.overlaps[overlap,c("seg.1","seg.2")]), "end"])
     if (verbose) print(paste0("Calculating divergence between ", segment.overlaps[overlap, "seg.1"], " and ", segment.overlaps[overlap, "seg.2"], " (Pseudotime ", round(trim.before, digits=3), " to ", round(trim.after, digits=3), ")"))
-    return(visitDivergenceByPseudotime(object, pseudotime, segment.1 = segment.overlaps[overlap, "seg.1"], segment.2=segment.overlaps[overlap, "seg.2"], cells.in.segments = cells.in.segments, pseudotime.cuts = pseudotime.cuts, pseudotime.min = trim.before, pseudotime.max = trim.after, window.size = window.size, p.thresh = p.thresh, divergence.method = divergence.method, verbose=verbose, diff_genes=diff_genes, gene.thresh=0.3))
+    return(visitDivergenceByPseudotime(object, pseudotime, segment.1 = segment.overlaps[overlap, "seg.1"], segment.2=segment.overlaps[overlap, "seg.2"], cells.in.segments = cells.in.segments, pseudotime.cuts = pseudotime.cuts, pseudotime.min = trim.before, pseudotime.max = trim.after, window.size = window.size, p.thresh = p.thresh, divergence.method = divergence.method, verbose=verbose, diff_genes=diff_genes, gene.thresh=gene.thresh))
   })
   names(pseudotime.divergences) <- apply(segment.overlaps, 1, function(x) paste0(x[1], "-", x[2]))
   # Extract pseudotime breakpoints
