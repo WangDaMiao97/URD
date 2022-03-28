@@ -77,6 +77,7 @@ URD <- methods::setClass("URD", slots = c(
   pca.scores="data.frame", 
   pca.sig="vector", 
   tsne.y="data.frame", 
+  harmony = "data.frame", 
   plot.3d="list",
   gene.sig.z="data.frame", 
   dm=c("DiffusionMap",NULL), 
