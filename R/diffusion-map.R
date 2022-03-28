@@ -78,15 +78,25 @@ importDM <- function(object, dm, cell.names=NULL) {
 #' object <- calcDM(object, knn = 200, sigma.use = 8)
 #' 
 #' @export
-calcDM <- function(object, genes.use=object@var.genes, cells.use=NULL, knn=NULL, sigma.use=NULL, n_local=5:7, distance=c("euclidean", "cosine", "rankcor"), density.norm=T, dcs.store=200, verbose=T) {
-  
-  # Subset the data and convert to a matrix without row or column names because they crash destiny.
-  if (is.null(genes.use) || length(genes.use) == 0) genes.use <- rownames(object@logupx.data)
-  if (is.null(cells.use)) cells.use <- colnames(object@logupx.data)
-  data.use <- t(object@logupx.data[genes.use, cells.use])
-  rownames(data.use) <- NULL
-  colnames(data.use) <- NULL
-  data.use <- as.matrix(data.use)
+calcDM <- function(object, reduction.use = NULL, genes.use=object@var.genes, cells.use=NULL, knn=NULL, sigma.use=NULL, n_local=5:7, distance=c("euclidean", "cosine", "rankcor"), density.norm=T, dcs.store=200, verbose=T) {
+  if (is.null(reduction.use)){
+    # Subset the data and convert to a matrix without row or column names because they crash destiny.
+    if (is.null(genes.use) || length(genes.use) == 0) genes.use <- rownames(object@logupx.data)
+    if (is.null(cells.use)) cells.use <- colnames(object@logupx.data)
+    data.use <- object@logupx.data[cells.use, genes.use]
+    rownames(data.use) <- NULL
+    colnames(data.use) <- NULL
+    data.use <- as.matrix(data.use)
+  }
+  else{
+    if (reduction.use=="harmony") {
+      if (is.null(cells.use)) cells.use <- rownames(object@harmony)
+      data.use <- object@harmony[cellls.use, ]
+    }
+    rownames(data.use) <- NULL
+    colnames(data.use) <- NULL
+    data.use <- as.matrix(data.use)       
+  }   
   
   # Figure out sigma
   if (is.null(sigma.use)) {
