@@ -30,6 +30,8 @@ urdSubset <- function(object, cells.keep) {
             if(!any(dim(object@pca.scores) == 0)) object@pca.scores <- object@pca.scores[cells.keep,]
             # Subset tSNE
             if(!any(dim(object@tsne.y) == 0)) object@tsne.y <- object@tsne.y[cells.keep,]
+            # Subset harmony
+            if(!any(dim(object@harmony) == 0)) object@harmony <- object@harmony[cells.keep,]
             # Subset gene signatures
             if(!any(dim(object@gene.sig.z) == 0)) object@gene.sig.z <- object@gene.sig.z[cells.keep,]
             #if(!any(dim(object@gene.sig.p) == 0)) object@gene.sig.p <- object@gene.sig.p[cells.keep,]
