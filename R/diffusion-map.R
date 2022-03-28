@@ -91,7 +91,7 @@ calcDM <- function(object, reduction.use = NULL, genes.use=object@var.genes, cel
   else{
     if (reduction.use=="harmony") {
       if (is.null(cells.use)) cells.use <- rownames(object@harmony)
-      data.use <- object@harmony[cellls.use, ]
+      data.use <- object@harmony[cells.use, ]
     }
     rownames(data.use) <- NULL
     colnames(data.use) <- NULL
