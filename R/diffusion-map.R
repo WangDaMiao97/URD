@@ -83,7 +83,7 @@ calcDM <- function(object, reduction.use = NULL, genes.use=object@var.genes, cel
     # Subset the data and convert to a matrix without row or column names because they crash destiny.
     if (is.null(genes.use) || length(genes.use) == 0) genes.use <- rownames(object@logupx.data)
     if (is.null(cells.use)) cells.use <- colnames(object@logupx.data)
-    data.use <- object@logupx.data[cells.use, genes.use]
+    data.use <- t(object@logupx.data[genes.use, cells.use])
     rownames(data.use) <- NULL
     colnames(data.use) <- NULL
     data.use <- as.matrix(data.use)
