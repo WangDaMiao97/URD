@@ -43,7 +43,7 @@
 #' 
 #' @export
 
-pseudotimeDetermineLogistic <- function(object, pseudotime, waypoints=NA, optimal.cells.forward, max.cells.back, pseudotime.direction="<", do.plot=T, print.values=T) {
+pseudotimeDetermineLogistic <- function(object, pseudotime, waypoints=NULL, optimal.cells.forward, max.cells.back, pseudotime.direction="<", do.plot=T, print.values=T) {
   asymptote=0.01
   if (pseudotime.direction == ">") {
     sort.dec <- FALSE
@@ -52,7 +52,7 @@ pseudotimeDetermineLogistic <- function(object, pseudotime, waypoints=NA, optima
   } else {
     stop("pseudotime.direction must be either \">\" or \"<\"")
   }
-  if (is.na(waypoints))
+  if (is.null(waypoints))
   {pseudotime.vec <- sort(object@pseudotime[,pseudotime], decreasing=sort.dec)
   } else {
     pseudotime.vec <- sort(object@pseudotime[waypoints, pseudotime], decreasing=sort.dec)}
@@ -108,7 +108,7 @@ pseudotimeDetermineLogistic <- function(object, pseudotime, waypoints=NA, optima
 #' object <- processRandomWalks(object, walks = these.walks, walks.name = "10", verbose = F)
 #' 
 #' @export
-pseudotimeWeightTransitionMatrix <- function(object, pseudotime, x0=NULL, k=NULL, logistic.params=NULL, pseudotime.direction="<", max.records=225e6, verbose=F) {
+pseudotimeWeightTransitionMatrix <- function(object, pseudotime, waypoints = NULL, x0=NULL, k=NULL, logistic.params=NULL, pseudotime.direction="<", max.records=225e6, verbose=F) {
   # Check that pseudotime.direction is valid
   if (!(pseudotime.direction %in% c(">", "<"))) stop ("pseudotime.direction parameter must be either \">\" or \"<\"")
   # Unpack logistic.params
@@ -119,7 +119,10 @@ pseudotimeWeightTransitionMatrix <- function(object, pseudotime, x0=NULL, k=NULL
   # Check that logistic parameters were specified
   if (is.null(x0) | is.null(k)) stop("Either specify x0 and k, or provide the results of determine.logistic.parameters to logistic.params.")
   # Get pseudotime vector
-  cell.names <- rownames(object@dm@transitions)
+  if (!is.null(waypoints)){
+    cell.names = waypoints
+  } else {
+    cell.names <- rownames(object@dm@transitions)}
   pseudotime.vec <- object@pseudotime[cell.names,pseudotime]
   # Figure out which cells have pseudotime and only use those.
   cells.w.pt <- which(!is.na(pseudotime.vec))
@@ -254,15 +257,20 @@ simulateRandomWalk <- function(start.cells, transition.matrix, end.cells, n=1000
 #' axial <- processRandomWalksFromTips(axial, axial.walks, verbose = F)
 #' 
 #' @export
-simulateRandomWalksFromTips <- function(object, tip.group.id, root.cells, transition.matrix, n.per.tip=10000, root.visits=1, max.steps=ncol(object@logupx.data), verbose=T) {
+simulateRandomWalksFromTips <- function(object, tip.group.id, root.cells, waypoints, transition.matrix, n.per.tip=10000, root.visits=1, max.steps=ncol(object@logupx.data), verbose=T) {
   # Get all tips from that id
-  all.tips <- sort(setdiff(as.character(unique(object@group.ids[,tip.group.id])), NA))
+  if (!is.null(waypoints)){
+    all.cells = waypoints
+    root.cells = root.cells[which(root.cells %in% waypoints)]
+  } else {
+    all.cells = rownames(object@group.ids)}
+  all.tips <- sort(setdiff(as.character(unique(object@group.ids[all.cells, tip.group.id])), NA))
   n.tips <- length(all.tips)
   # Run through tips
   tip.walks <- lapply(all.tips, function(tip) {
     if (verbose) print(paste0(Sys.time(), " - Starting random walks from tip ", tip))
     # Get tip cells
-    tip.cells <- rownames(object@group.ids)[which(as.character(object@group.ids[,tip.group.id]) == tip)]
+    tip.cells <- all.cells[which(as.character(object@group.ids[all.cells, tip.group.id]) == tip)]
     # Do random walks
     if (verbose) verbose.freq=round(n.per.tip/10) else verbose.freq=0
     walks <- simulateRandomWalk(start.cells=tip.cells, transition.matrix=transition.matrix, end.cells=root.cells, n=n.per.tip, end.visits=root.visits, verbose.freq=verbose.freq, max.steps=max.steps)
