@@ -215,7 +215,7 @@ simulateRandomWalk <- function(start.cells, transition.matrix, end.cells, n=1000
       if (current.cell %in% end.cells) stops.in.endzone <- stops.in.endzone + 1
       # If walk is too long, then it's probably stuck, so abandon.
       n.steps <- n.steps + 1
-      if (n.steps > max.steps) {
+      if (n.steps > max.steps || length(which(transition.matrix[current.cell,]>0))==0 ) {
         warning("Walk ", i, " length greater than ", max.steps, " so returning NULL.\n")
         return(NULL)
       }
@@ -258,7 +258,7 @@ simulateRandomWalk <- function(start.cells, transition.matrix, end.cells, n=1000
 #' axial <- processRandomWalksFromTips(axial, axial.walks, verbose = F)
 #' 
 #' @export
-simulateRandomWalksFromTips <- function(object, tip.group.id, root.cells, waypoints, transition.matrix, n.per.tip=10000, root.visits=1, max.steps=ncol(object@logupx.data), verbose=T) {
+simulateRandomWalksFromTips <- function(object, tip.group.id, root.cells, waypoints = NULL, transition.matrix, n.per.tip=10000, root.visits=1, max.steps=ncol(object@logupx.data), verbose=T) {
   # Get all tips from that id
   if (!is.null(waypoints)){
     all.cells = waypoints
