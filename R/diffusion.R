@@ -215,7 +215,7 @@ simulateRandomWalk <- function(start.cells, transition.matrix, end.cells, n=1000
       if (current.cell %in% end.cells) stops.in.endzone <- stops.in.endzone + 1
       # If walk is too long, then it's probably stuck, so abandon.
       n.steps <- n.steps + 1
-      if (n.steps > max.steps || length(which(transition.matrix[current.cell,]>0))==0 ) {
+      if (n.steps > max.steps || (length(which(transition.matrix[current.cell,]>0))==0) ) {
         warning("Walk ", i, " length greater than ", max.steps, " so returning NULL.\n")
         return(NULL)
       }
