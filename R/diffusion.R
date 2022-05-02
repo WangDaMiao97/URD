@@ -207,6 +207,10 @@ simulateRandomWalk <- function(start.cells, transition.matrix, end.cells, n=1000
     # Continue moving to new cells until within root.threshold cells of youngest cell
     while(stops.in.endzone < end.visits) {
       # Grab a new cell based on the weights from the transition probability matrix
+      if (length(which(transition.matrix[current.cell,]>0))==0){
+        warning("Walk ", i, " no transition, so returning NULL.\n")
+        return(NULL)
+      }
       print(paste0(current.cell, length(which(transition.matrix[current.cell,]>0))))
       current.cell <- sample(rownames(transition.matrix), size=1, prob=transition.matrix[current.cell,])
       # Update and store information about the new cell.
@@ -215,7 +219,7 @@ simulateRandomWalk <- function(start.cells, transition.matrix, end.cells, n=1000
       if (current.cell %in% end.cells) stops.in.endzone <- stops.in.endzone + 1
       # If walk is too long, then it's probably stuck, so abandon.
       n.steps <- n.steps + 1
-      if (n.steps > max.steps || (length(which(transition.matrix[current.cell,]>0))==0) ) {
+      if (n.steps > max.steps) {
         warning("Walk ", i, " length greater than ", max.steps, " so returning NULL.\n")
         return(NULL)
       }
