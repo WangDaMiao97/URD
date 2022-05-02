@@ -43,7 +43,7 @@
 #' 
 #' @export
 
-pseudotimeDetermineLogistic <- function(object, pseudotime, optimal.cells.forward, max.cells.back, pseudotime.direction="<", do.plot=T, print.values=T) {
+pseudotimeDetermineLogistic <- function(object, pseudotime, waypoints=NA, optimal.cells.forward, max.cells.back, pseudotime.direction="<", do.plot=T, print.values=T) {
   asymptote=0.01
   if (pseudotime.direction == ">") {
     sort.dec <- FALSE
@@ -52,7 +52,10 @@ pseudotimeDetermineLogistic <- function(object, pseudotime, optimal.cells.forwar
   } else {
     stop("pseudotime.direction must be either \">\" or \"<\"")
   }
-  pseudotime.vec <- sort(object@pseudotime[,pseudotime], decreasing=sort.dec)
+  if (is.na(waypoints))
+  {pseudotime.vec <- sort(object@pseudotime[,pseudotime], decreasing=sort.dec)
+  } else {
+    pseudotime.vec <- sort(object@pseudotime[waypoints, pseudotime], decreasing=sort.dec)}
   mean.pseudotime.back <- mean(pseudotime.vec[1:(length(pseudotime.vec) - max.cells.back)] - pseudotime.vec[(max.cells.back+1):length(pseudotime.vec)])
   mean.pseudotime.forward <- mean(pseudotime.vec[(optimal.cells.forward+1):length(pseudotime.vec)] - pseudotime.vec[1:(length(pseudotime.vec)-optimal.cells.forward)])
   x0 <- mean(c(mean.pseudotime.back, mean.pseudotime.forward))  
