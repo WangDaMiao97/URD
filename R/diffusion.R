@@ -207,7 +207,7 @@ simulateRandomWalk <- function(start.cells, transition.matrix, end.cells, n=1000
     # Continue moving to new cells until within root.threshold cells of youngest cell
     while(stops.in.endzone < end.visits) {
       # Grab a new cell based on the weights from the transition probability matrix
-      print(paste0(current.cell, which(transition.matrix[current.cell,]>0)))
+      # print(paste0(current.cell, which(transition.matrix[current.cell,]>0)))
       current.cell <- sample(rownames(transition.matrix), size=1, prob=transition.matrix[current.cell,])
       # Update and store information about the new cell.
       diffusion.path <- c(diffusion.path, current.cell)
