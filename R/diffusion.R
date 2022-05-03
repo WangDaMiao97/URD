@@ -211,7 +211,6 @@ simulateRandomWalk <- function(start.cells, transition.matrix, end.cells, n=1000
         warning("Walk ", i, " no transition, so returning NULL.\n")
         return(NULL)
       }
-      print(paste0(current.cell, length(which(transition.matrix[current.cell,]>0))))
       current.cell <- sample(rownames(transition.matrix), size=1, prob=transition.matrix[current.cell,])
       # Update and store information about the new cell.
       diffusion.path <- c(diffusion.path, current.cell)
