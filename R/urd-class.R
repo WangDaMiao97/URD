@@ -165,7 +165,8 @@ createURD <- function(count.data, meta=NULL, min.cells=3, min.genes=500, min.cou
 
   # Create an URD object
   if (verbose) message(paste0(Sys.time(), ": Creating URD object."))
-  object <- methods::new("URD", count.data=as(count.data[genes.use, cells.enough.genes], "dgCMatrix"))
+  # object <- methods::new("URD", count.data=as(count.data[genes.use, cells.enough.genes], "dgCMatrix"))
+  object <- methods::new("URD", count.data= count.data[genes.use, cells.enough.genes])
   shhhh <- gc()
   
   # Determine normalization factor
@@ -183,7 +184,7 @@ createURD <- function(count.data, meta=NULL, min.cells=3, min.genes=500, min.cou
     shhhh <- gc()
     i <- (chunk-1) * max.genes.in.ram + 1
     j <- min((chunk * max.genes.in.ram), n.cells)
-    as(round(log2(sweep(object@count.data[,i:j], 2, norm_factors[i:j], "*")+1), digits=2), "dgCMatrix")
+    round(log2(sweep(object@count.data[,i:j], 2, norm_factors[i:j], "*")+1), digits=2)
   })
   
   # Generate @logupx.data
