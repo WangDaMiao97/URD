@@ -165,13 +165,15 @@ createURD <- function(count.data, meta=NULL, min.cells=3, min.genes=500, min.cou
 
   # Create an URD object
   if (verbose) message(paste0(Sys.time(), ": Creating URD object."))
-  # object <- methods::new("URD", count.data=as(count.data[genes.use, cells.enough.genes], "dgCMatrix"))
-  object <- methods::new("URD", count.data= count.data[genes.use, cells.enough.genes])
+  object <- methods::new("URD", count.data=as(count.data[genes.use, cells.enough.genes], "dgCMatrix"))
+  # object <- methods::new("URD", count.data= count.data[genes.use, cells.enough.genes])
   shhhh <- gc()
   
   # Determine normalization factor
   if (verbose) message(paste0(Sys.time(), ": Determining normalization factors."))
-  cs <- apply(object@count.data, 2, sum)
+  temp.count = as(object@count.data, "dgTMatrix")
+  temp.count = as.matrix(temp.count)
+  cs <- apply(temp.count, 2, sum)
   norm_factors <- (10**ceiling(log10(median(cs))))/cs
   #if (verbose) message(summary(norm_factors))
   shhhh <- gc()
@@ -184,7 +186,8 @@ createURD <- function(count.data, meta=NULL, min.cells=3, min.genes=500, min.cou
     shhhh <- gc()
     i <- (chunk-1) * max.genes.in.ram + 1
     j <- min((chunk * max.genes.in.ram), n.cells)
-    round(log2(sweep(object@count.data[,i:j], 2, norm_factors[i:j], "*")+1), digits=2)
+    # round(log2(sweep(object@count.data[,i:j], 2, norm_factors[i:j], "*")+1), digits=2)
+    round(log2(sweep(temp.count[,i:j], 2, norm_factors[i:j], "*")+1), digits=2)
   })
   
   # Generate @logupx.data
@@ -200,7 +203,8 @@ createURD <- function(count.data, meta=NULL, min.cells=3, min.genes=500, min.cou
   
   # Set up the metadata
   object@meta <- data.frame(n.Genes=num.genes[colnames(object@count.data)])
-  object@meta[,"n.Trans"] <- apply(object@count.data, 2, sum)
+  object@meta[,"n.Trans"] <- apply(temp.count, 2, sum)
+  # object@meta[,"n.Trans"] <- apply(object@count.data, 2, sum)
   if (!is.null(meta)) {
     object@meta <- cbind(object@meta, meta[rownames(object@meta),])
   }
