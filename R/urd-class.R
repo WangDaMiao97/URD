@@ -187,7 +187,7 @@ createURD <- function(count.data, meta=NULL, min.cells=3, min.genes=500, min.cou
     i <- (chunk-1) * max.genes.in.ram + 1
     j <- min((chunk * max.genes.in.ram), n.cells)
     # round(log2(sweep(object@count.data[,i:j], 2, norm_factors[i:j], "*")+1), digits=2)
-    round(log2(sweep(temp.count[,i:j], 2, norm_factors[i:j], "*")+1), digits=2)
+    as(round(log2(sweep(temp.count[,i:j], 2, norm_factors[i:j], "*")+1), digits=2), "dgCMatrix")
   })
   
   # Generate @logupx.data
