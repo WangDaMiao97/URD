@@ -46,7 +46,7 @@ putativeCellsInSegment <- function(object, segments, minimum.visits, visit.thres
 #' @param cache (Logical) Used cached values? This will check \code{object@@tree$segment.divergence} and only calculate values for new segments.
 #' @param verbose (Logical) Report on progress?
 #' @keywords internal
-allSegmentDivergenceByPseudotime <- function(object, pseudotime, segments, divergence.method=c("ks","preference"), pseudotime.cuts=80, window.size=5, minimum.visits=10, visit.threshold=0.7, p.thresh=.01, pref.thresh=0.5, breakpoint.decision.plots=NULL, cache=T, verbose=F, diff_genes = NULL, gene.thresh=0.3) {
+allSegmentDivergenceByPseudotime <- function(object, pseudotime, segments, divergence.method=c("ks","preference"), pseudotime.cuts=80, window.size=5, minimum.visits=10, visit.threshold=0.7, p.thresh=.01, pref.thresh=0.5, breakpoint.decision.plots=NULL, cache=T, verbose=F, diff_genes = NULL, CL_lists=NULL, gene.thresh=0.3) {
   if (length(divergence.method) > 1) divergence.method=divergence.method[1]
   if (!(divergence.method %in% c("ks", "preference"))) stop("Divergence method must be 'ks' or 'preference'.")
   # Make sure this is properly used as names, not indices
@@ -75,7 +75,7 @@ allSegmentDivergenceByPseudotime <- function(object, pseudotime, segments, diver
     trim.before <- max(object@tree$segment.pseudotime.limits[unlist(segment.overlaps[overlap,c("seg.1","seg.2")]), "start"])
     trim.after <- min(object@tree$segment.pseudotime.limits[unlist(segment.overlaps[overlap,c("seg.1","seg.2")]), "end"])
     if (verbose) print(paste0("Calculating divergence between ", segment.overlaps[overlap, "seg.1"], " and ", segment.overlaps[overlap, "seg.2"], " (Pseudotime ", round(trim.before, digits=3), " to ", round(trim.after, digits=3), ")"))
-    return(visitDivergenceByPseudotime(object, pseudotime, segment.1 = segment.overlaps[overlap, "seg.1"], segment.2=segment.overlaps[overlap, "seg.2"], cells.in.segments = cells.in.segments, pseudotime.cuts = pseudotime.cuts, pseudotime.min = trim.before, pseudotime.max = trim.after, window.size = window.size, p.thresh = p.thresh, divergence.method = divergence.method, verbose=verbose, diff_genes=diff_genes, gene.thresh=gene.thresh))
+    return(visitDivergenceByPseudotime(object, pseudotime, segment.1 = segment.overlaps[overlap, "seg.1"], segment.2=segment.overlaps[overlap, "seg.2"], cells.in.segments = cells.in.segments, pseudotime.cuts = pseudotime.cuts, pseudotime.min = trim.before, pseudotime.max = trim.after, window.size = window.size, p.thresh = p.thresh, divergence.method = divergence.method, verbose=verbose, diff_genes=diff_genes, CL_lists=CL_lists, gene.thresh=gene.thresh))
   })
   names(pseudotime.divergences) <- apply(segment.overlaps, 1, function(x) paste0(x[1], "-", x[2]))
   # Extract pseudotime breakpoints
@@ -129,7 +129,8 @@ allSegmentDivergenceByPseudotime <- function(object, pseudotime, segments, diver
 #' details of the calculation for each window ("details"), which is a data.frame: Rows are pseudotime windows, columns are KS-test p-value adjusted for multiple hypotheses ("p"), pseudotime of cells in the window ("mean.pseudotime", "min.pseudotime", "max.pseudotime"), number of cells considered from each segment ("cells.visited.seg1", "cells.visited.seg2"), and whether the window passed the p-value threshold for significance ("different")
 #' 
 #' @keywords internal
-visitDivergenceByPseudotime <- function(object, pseudotime, segment.1, segment.2, cells.in.segments=NULL, cells.segment.1=NULL, cells.segment.2=NULL, divergence.method=c("ks","preference"), pseudotime.cuts=80, window.size=5, pseudotime.min=NULL, pseudotime.max=NULL, p.thresh=.01, pref.thresh=0.5, verbose=T, diff_genes = NULL, gene.thresh=0.3) {
+visitDivergenceByPseudotime <- function(object, pseudotime, segment.1, segment.2, cells.in.segments=NULL, cells.segment.1=NULL, cells.segment.2=NULL, divergence.method=c("ks","preference"), pseudotime.cuts=80, window.size=5, pseudotime.min=NULL, pseudotime.max=NULL, p.thresh=.01, pref.thresh=0.5, verbose=T, diff_genes = NULL, CL_lists=NULL, gene.thresh=0.3) {
+  is_CL = FALSE
   # If method left as default, cull down.
   if (length(divergence.method) > 1) divergence.method <- divergence.method[1]
   # Make sure that cells.to.operate on are provided.
@@ -160,8 +161,16 @@ visitDivergenceByPseudotime <- function(object, pseudotime, segment.1, segment.2
     return(cells)
   })
   
+  # Determine whether CL_list contains the current two segments
+  for (cl in CL_list){
+    if (segment.1%in%cl & segment.2%in%cl){
+    is_CL=TRUE}
+  }
+  
   # Calculate divergence
-  if (divergence.method=="ks") {
+  if (is_CL){
+    div.pseudotime$different <- TRUE
+  } else if (divergence.method=="ks") {
     # Calculate divergence by KS test in each window
     div.pseudotime <- divergenceKSVisitation(visit.data=visit.data, pseudotime.windows=pseudotime.windows, cells.segment.1=cells.segment.1, cells.segment.2=cells.segment.2)
     # Multiple hypothesis correction because ran several tests
