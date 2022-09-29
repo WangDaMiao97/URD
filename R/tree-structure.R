@@ -168,9 +168,7 @@ visitDivergenceByPseudotime <- function(object, pseudotime, segment.1, segment.2
   }
   
   # Calculate divergence
-  if (is_CL){
-    div.pseudotime$different <- TRUE
-  } else if (divergence.method=="ks") {
+  if (divergence.method=="ks") {
     # Calculate divergence by KS test in each window
     div.pseudotime <- divergenceKSVisitation(visit.data=visit.data, pseudotime.windows=pseudotime.windows, cells.segment.1=cells.segment.1, cells.segment.2=cells.segment.2)
     # Multiple hypothesis correction because ran several tests
@@ -191,6 +189,10 @@ visitDivergenceByPseudotime <- function(object, pseudotime, segment.1, segment.2
     }
   } else {
     stop("Preference must be either 'ks' or 'preference'.")
+  }
+  
+  if (is_CL){
+    div.pseudotime$different <- TRUE
   }
   
   # Determine pseudotime breakpoint
