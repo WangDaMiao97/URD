@@ -162,7 +162,7 @@ visitDivergenceByPseudotime <- function(object, pseudotime, segment.1, segment.2
   })
   
   # Determine whether CL_list contains the current two segments
-  for (cl in CL_list){
+  for (cl in CL_lists){
     if (segment.1%in%cl & segment.2%in%cl){
     is_CL=TRUE}
   }
