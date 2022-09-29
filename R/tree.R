@@ -76,7 +76,7 @@
 #' object.built <- buildTree(object = object, pseudotime="pseudotime", divergence.method = "ks", tips.use=tips.to.use, weighted.fusion = T, use.only.original.tips = T, cells.per.pseudotime.bin=80, bins.per.pseudotime.window = 5, minimum.visits = 1, visit.threshold = 0.7, p.thresh = 0.025, save.breakpoint.plots = NULL, dendro.node.size = 100, min.cells.per.segment = 10, min.pseudotime.per.segment = .01, verbose = F)
 #' 
 #' @export
-buildTree <- function(object, pseudotime, tips.use=NULL, divergence.method=c("ks", "preference"), weighted.fusion=T, use.only.original.tips=T, cells.per.pseudotime.bin=80, bins.per.pseudotime.window=5, minimum.visits=10, visit.threshold=0.7, save.breakpoint.plots=NULL, save.all.breakpoint.info=F, p.thresh=.01, min.cells.per.segment=1, min.pseudotime.per.segment=.01, dendro.node.size=100, dendro.cell.jitter=0.15, dendro.cell.dist.to.tree=0.05, verbose=T, diff_genes=NULL, gene.thresh=0.3) {
+buildTree <- function(object, pseudotime, tips.use=NULL, divergence.method=c("ks", "preference"), weighted.fusion=T, use.only.original.tips=T, cells.per.pseudotime.bin=80, bins.per.pseudotime.window=5, minimum.visits=10, visit.threshold=0.7, save.breakpoint.plots=NULL, save.all.breakpoint.info=F, p.thresh=.01, min.cells.per.segment=1, min.pseudotime.per.segment=.01, dendro.node.size=100, dendro.cell.jitter=0.15, dendro.cell.dist.to.tree=0.05, verbose=T, diff_genes=NULL, CL_lists=NULL, gene.thresh=0.3) {
   # Check divergence.method parameter
   if (length(divergence.method) > 1) divergence.method <- divergence.method[1]
   if (!(divergence.method %in% c("ks", "preference"))) stop("Divergence method must be 'ks' or 'preference'.")
@@ -114,7 +114,7 @@ buildTree <- function(object, pseudotime, tips.use=NULL, divergence.method=c("ks
     stringsAsFactors = F, row.names = tips
   )
   # Calculate segment pseudotime divergence, WITHOUT cache in case this function is being re-run
-  object <- allSegmentDivergenceByPseudotime(object, pseudotime=pseudotime, divergence.method=divergence.method, segments=tips, pseudotime.cuts=cells.per.pseudotime.bin, window.size=bins.per.pseudotime.window, minimum.visits=minimum.visits, visit.threshold=visit.threshold, p.thresh=p.thresh, breakpoint.decision.plots=save.breakpoint.plots, cache=F, verbose=verbose, diff_genes = diff_genes, gene.thresh=gene.thresh)
+  object <- allSegmentDivergenceByPseudotime(object, pseudotime=pseudotime, divergence.method=divergence.method, segments=tips, pseudotime.cuts=cells.per.pseudotime.bin, window.size=bins.per.pseudotime.window, minimum.visits=minimum.visits, visit.threshold=visit.threshold, p.thresh=p.thresh, breakpoint.decision.plots=save.breakpoint.plots, cache=F, verbose=verbose, diff_genes = diff_genes, CL_lists=CL_lists, gene.thresh=gene.thresh)
   # If storing all pseudotime breakpoint info, keep track of it.
   if (save.all.breakpoint.info) {
     all.pseudotime.breakpoint.details <- object@tree$pseudotime.breakpoint.details
