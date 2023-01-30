@@ -433,6 +433,7 @@ assignCellsToSegments <- function(object, pseudotime, verbose=T) {
   # Get visit data
   visit.data <- data.frame(object@diff.data[,paste0("visitfreq.raw.", object@tree$segments)])
   rownames(visit.data) = rownames(object@diff.data)
+  colnames(visit.data) = paste0("visitfreq.raw.", object@tree$segments)
   segments <- object@tree$segments
   # For cells in tip.clusters, make sure they have high visitation from their own tip
   # to compensate for the fact that tip cells have unusual visitation parameters,
@@ -448,7 +449,11 @@ assignCellsToSegments <- function(object, pseudotime, verbose=T) {
       tip.to.assign <- segParent(object, tip.to.assign, original.joins=T)
     }
     # Set visitation frequency to max + 1
+    if (dim(visit.data)[2]>1){
     visit.data[cells.in.tip, paste0("visitfreq.raw.", tip.to.assign)] <- apply(visit.data[cells.in.tip,], 1, max) + 1
+    } else {
+      visit.data[cells.in.tip, paste0("visitfreq.raw.", tip.to.assign)] <- visit.data[cells.in.tip,] + 1
+    }
   }
   # Zero out visitation outside of the segment limits for each segment
   for (segment in segments) {
