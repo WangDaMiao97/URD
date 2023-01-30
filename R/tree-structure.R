@@ -431,7 +431,8 @@ assignCellsToSegments <- function(object, pseudotime, verbose=T) {
   # Get rid of the old 'cells.in.segments' data.frame now that you're done
   if (!is.null(object@tree$cells.in.segments)) object@tree$cells.in.segments <- NULL
   # Get visit data
-  visit.data <- object@diff.data[,paste0("visitfreq.raw.", object@tree$segments)]
+  visit.data <- data.frame(object@diff.data[,paste0("visitfreq.raw.", object@tree$segments)])
+  rownames(visit.data) = rownames(object@diff.data)
   segments <- object@tree$segments
   # For cells in tip.clusters, make sure they have high visitation from their own tip
   # to compensate for the fact that tip cells have unusual visitation parameters,
