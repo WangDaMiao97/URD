@@ -172,14 +172,14 @@ visitDivergenceByPseudotime <- function(object, pseudotime, segment.1, segment.2
     # Calculate divergence by KS test in each window
     div.pseudotime <- divergenceKSVisitation(visit.data=visit.data, pseudotime.windows=pseudotime.windows, cells.segment.1=cells.segment.1, cells.segment.2=cells.segment.2)
     # Multiple hypothesis correction because ran several tests
-    # div.pseudotime$p <- p.adjust(div.pseudotime$p, method="holm")
+    div.pseudotime$p <- p.adjust(div.pseudotime$p, method="holm")
     # Determine whether the visit distributions are 'different' in each pseudotime window by p-value
     div.pseudotime$different <- div.pseudotime$p <= p.thresh
   } else if (divergence.method=="preference") {
     # Calculate divergence by dip test on preference in each window
     div.pseudotime <- divergencePreferenceDip(object, visit.data=visit.data, cells.in.windows=cells.in.windows, cells.segment.1=cells.segment.1, cells.segment.2=cells.segment.2, diff_genes = diff_genes)
     # Multiple hypothesis correction because ran several tests
-    # div.pseudotime$p <- p.adjust(div.pseudotime$p, method="holm")
+    div.pseudotime$p <- p.adjust(div.pseudotime$p, method="holm")
     # Determine whether the the visit distributions are 'different': must have significant p-value for bimodality OR be unimodal, but with mean preference far from 0. (Sometimes can get a unimodal distribution, but it's not near 0, so should not fuse there)
     if (length(diff_genes)>0){
       div.pseudotime$different <- div.pseudotime$p <= p.thresh | div.pseudotime$mean.preference > pref.thresh | div.pseudotime$diff.genes.mean >gene.thresh
